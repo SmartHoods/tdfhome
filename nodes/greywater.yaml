@@ -10,8 +10,8 @@ binary_sensor:
     id: hall_binary
     sensor_id: hall_sensor
     threshold:
-      lower: 0.8
-      upper: 1.0
+      lower: 1.5
+      upper: 1.7
     internal: true
     on_press:
       then:
@@ -24,7 +24,7 @@ sensor:
     id: hall_sensor
     pin: GPIO33
     attenuation: 6db
-    update_interval: 250ms
+    update_interval: 100ms
     internal: true
   - platform: template
     name: "L of Water Used"
