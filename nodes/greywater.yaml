@@ -28,3 +28,6 @@ wifi:
 
 captive_portal:
     
+sensor:
+  - platform: internal_temperature
+    name: "Internal Temperature"
