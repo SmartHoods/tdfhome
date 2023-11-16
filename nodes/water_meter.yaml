@@ -3,6 +3,7 @@ logger:
   logs:
     # adc logging gets VERY verbose
     sensor: INFO
+    binary_sensor: INFO
 
 globals:
   - id: water_pulses
@@ -33,7 +34,7 @@ sensor:
     id: hall_sensor
     pin: GPIO33
     attenuation: 6db
-    update_interval: 1ms
+    update_interval: 5ms
     internal: true
   - platform: template
     name: "${upper_devicename} Water Volume"
@@ -44,7 +45,7 @@ sensor:
     update_interval: 10s
     lambda: |-
       ESP_LOGD("Water Meter", "Pulse detected, count: %d", id(water_pulses));
-      return id(water_pulses) / 0.03;
+      return id(water_pulses) * 0.03;
   - platform: template
     name: "${upper_devicename} Water Flow Rate"
     unit_of_measurement: "L/min"
@@ -54,5 +55,5 @@ sensor:
     lambda: |-
       int pulse_difference = id(water_pulses) - id(previous_pulse_count);
       id(previous_pulse_count) = id(water_pulses);
-      float flow_rate = pulse_difference / 0.03; // Convert pulses to liters
+      float flow_rate = pulse_difference * 0.03; // Convert pulses to liters
       return flow_rate; // Flow rate in liters per minute
