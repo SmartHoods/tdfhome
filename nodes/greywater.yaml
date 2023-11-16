@@ -1,7 +1,7 @@
-esphome:
-  name: "greywater"
+substitutions:
+  devicename: greywater
+  upper_devicename: Greywater
 
 <<: !include common.yaml
-
 <<: !include water_meter.yaml
 

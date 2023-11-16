@@ -28,7 +28,7 @@ binary_sensor:
 
 sensor:
   - platform: internal_temperature
-    name: "Internal Temperature"
+    name: "${upper_devicename} Internal Temperature"
   - platform: adc
     id: hall_sensor
     pin: GPIO33
@@ -36,7 +36,7 @@ sensor:
     update_interval: 1ms
     internal: true
   - platform: template
-    name: "Water Volume"
+    name: "${upper_devicename} Water Volume"
     device_class: "water"
     unit_of_measurement: "L"
     state_class: total_increasing
@@ -46,7 +46,7 @@ sensor:
       ESP_LOGD("Water Meter", "Pulse detected, count: %d", id(water_pulses));
       return id(water_pulses) / 0.03;
   - platform: template
-    name: "${esphome.name} Water Flow Rate"
+    name: "${upper_devicename} Water Flow Rate"
     unit_of_measurement: "L/min"
     device_class: "water"
     accuracy_decimals: 2
