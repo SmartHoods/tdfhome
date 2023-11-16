@@ -1,38 +1,7 @@
+esphome:
+  name: greywater
+
 <<: !include common.yaml
 
-globals:
-  id: water_pulses
-  type: int
-  restore_value: True
+<<: !include water_meter.yaml
 
-binary_sensor:
-  - platform: analog_threshold
-    id: hall_binary
-    sensor_id: hall_sensor
-    threshold:
-      lower: 1.5
-      upper: 1.7
-    internal: true
-    on_press:
-      then:
-        - lambda: id(water_pulses) += 1;
-
-sensor:
-  - platform: internal_temperature
-    name: "Internal Temperature"
-  - platform: adc
-    id: hall_sensor
-    pin: GPIO33
-    attenuation: 6db
-    update_interval: 100ms
-    internal: true
-  - platform: template
-    name: "L of Water Used"
-    device_class: "water"
-    unit_of_measurement: "L"
-    state_class: total_increasing
-    accuracy_decimals: 2
-    update_interval: 10s
-    lambda:
-      return id(water_pulses) * 0.0001;
-    internal: true

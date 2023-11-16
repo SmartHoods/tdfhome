@@ -1,0 +1,58 @@
+logger:
+  level: DEBUG
+  logs:
+    # adc logging gets VERY verbose
+    sensor: INFO
+
+globals:
+  - id: water_pulses
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: previous_pulse_count
+    type: int
+    restore_value: false
+    initial_value: '0'
+
+binary_sensor:
+  - platform: analog_threshold
+    id: hall_binary
+    sensor_id: hall_sensor
+    threshold:
+      lower: 0.4
+      upper: 1.2
+    internal: true
+    on_press:
+      then:
+        - lambda: id(water_pulses) += 1;
+
+sensor:
+  - platform: internal_temperature
+    name: "Internal Temperature"
+  - platform: adc
+    id: hall_sensor
+    pin: GPIO33
+    attenuation: 6db
+    update_interval: 1ms
+    internal: true
+  - platform: template
+    name: "Water Volume"
+    device_class: "water"
+    unit_of_measurement: "L"
+    state_class: total_increasing
+    accuracy_decimals: 2
+    update_interval: 10s
+    lambda: |-
+      ESP_LOGD("Water Meter", "Pulse detected, count: %d", id(water_pulses));
+      return id(water_pulses) / 0.03;
+  - platform: template
+    name: "Water Flow Rate"
+    unit_of_measurement: "L/min"
+    device_class: "water"
+    accuracy_decimals: 2
+    update_interval: 1min
+    lambda: |-
+      int pulse_difference = id(water_pulses) - id(previous_pulse_count);
+      id(previous_pulse_count) = id(water_pulses);
+      float flow_rate = pulse_difference / 0.03; // Convert pulses to liters
+      return flow_rate; // Flow rate in liters per minute
